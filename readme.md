@@ -36,14 +36,14 @@ Front-end, клиент на Angular, *будет* здесь `auth-secure-clien
 
 * `POST` `/auth/signup` - регистрация пользователя
 * `POST` `/auth/login/` - авторизация пользователя
-* `POST` `/auth/logout` - выход из системы, secure page
+* `POST` `/auth/logout` - выход из системы
 * `POST` `/auth/refresh/` - обновление обоих токенов
+* `GET` `/profile` - профиль пользователя, получение данных пользователя, secure page
+* `GET` `/users` - получить всех пользователей
 
 Not implemented:
 
 * `POST` `/auth/remove` - удаление пользователя, secure page
-* `GET` `/profile` - профиль пользователя, secure page
-* `GET` `/users` - получить всех пользователей
 
 ## TODO
 
@@ -51,7 +51,7 @@ Not implemented:
 * Сделать удаление пользователя (можно удалить свой аккаунт)
 * Проверить разные вкладки, мультисессии (одновременный вход с разных устройств)
 * Добавить строгую валидацию входящих данных (email, password) (`express-validator` или `joi`)
-* Добавить `helmet`, `cors` (безопасность)
+* Добавить `helmet` (безопасность)
 
 ## Feedback
 
