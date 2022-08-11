@@ -1,0 +1,25 @@
+# Default
+.idea
+.vscode
+.cache
+
+# Node
+node_modules
+
+# Dist & test
+dist
+test
+
+# dotenv environment variable files
+# .env
+# .env.development.local
+# .env.test.local
+# .env.production.local
+# .env.local
+
+# BD, logs
+*.log
+logs
+
+# Other
+npm-debug.log*
