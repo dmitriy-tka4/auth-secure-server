@@ -4,6 +4,8 @@ import User from '../models/user.model.js';
 import UserRefreshToken from '../models/user-refresh-token.model.js';
 import * as authUtil from '../utils/auth.util.js';
 
+// signup
+
 const signup = async (req, res, next) => {
   if (!req.body) {
     return res.status(400).send('Запрос не имеет тела запроса');
@@ -52,11 +54,16 @@ const signup = async (req, res, next) => {
     return res.status(400).send(e.message);
   }
 
+  // add refresh token to cookie
+  res.cookie('refresh_token', refreshToken); // , { httpOnly: true, secure: true }
+
   res.status(201).json({
     accessToken,
     refreshToken
   });
 };
+
+// login
 
 const login = async (req, res, next) => {
   if (!req.body) {
@@ -80,7 +87,7 @@ const login = async (req, res, next) => {
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
   if (!isPasswordCorrect) {
-    return res.status(401).send('Пароль неверный');
+    return res.status(400).send('Пароль неверный');
   }
 
   // нужно удалить старый Refresh token, если он есть в базе
@@ -101,11 +108,16 @@ const login = async (req, res, next) => {
     return res.status(400).send(e.message);
   }
 
+  // add refresh token to cookie
+  res.cookie('refresh_token', refreshToken); // , { httpOnly: true, secure: true }
+
   res.status(201).json({
     accessToken,
     refreshToken
   });
 };
+
+// logout
 
 const logout = async (req, res, next) => {
   if (!req.userData) {
@@ -125,6 +137,9 @@ const logout = async (req, res, next) => {
     return next(e);
   }
 
+  // удалить cookie
+  res.clearCookie('refresh_token'); // , { httpOnly: true, secure: true }
+
   res.sendStatus(204);
 };
 
@@ -132,23 +147,23 @@ const refresh = async (req, res, next) => {
   // check availability refresh token
 
   // in cookies
-  // const refrehToken = req.cookies['refresh_token']
+  const inRefreshToken = req.cookies['refresh_token']
 
   // in headers
   // const authHeader = req.get('Authorization');
 
   // if (!authHeader) {
-  //   return res.status(401).send('Отсутствует authorization header');
+  //   return res.status(400).send('Отсутствует authorization header');
   // }
 
   // const refrehToken = authHeader && authHeader.split(' ')[0] === 'Bearer' && authHeader.split(' ')[1];
 
   // in body
-  if (!req.body) {
-    return res.status(400).send('Нет тела запроса');
-  }
+  // if (!req.body) {
+  //   return res.status(400).send('Нет тела запроса');
+  // }
 
-  const inRefreshToken = req.body.refreshToken;
+  // const inRefreshToken = req.body.refreshToken;
 
   if (!inRefreshToken) {
     return res.status(400).send('Нет refresh токена');
@@ -158,7 +173,7 @@ const refresh = async (req, res, next) => {
     const decodedInRefreshTokenPayload = jwt.verify(inRefreshToken, process.env.REFRESH_TOKEN_SECRET);
 
     if (decodedInRefreshTokenPayload.type !== 'refresh') {
-      return res.status(401).send('У переданного токена тип не refresh');
+      return res.status(400).send('У переданного токена тип не refresh');
     }
 
     const userId = decodedInRefreshTokenPayload.userId;
@@ -179,7 +194,7 @@ const refresh = async (req, res, next) => {
     const isTokenCorrect = await bcrypt.compare(inRefreshToken, currentRefreshToken);
 
     if (!isTokenCorrect) {
-      return res.status(401).send('Refresh токен недействительный');
+      return res.status(400).send('Refresh токен недействительный');
     }
 
     // далее как в логине
@@ -201,6 +216,9 @@ const refresh = async (req, res, next) => {
     } catch (e) {
       return res.status(400).send(e.message);
     }
+
+    // add refresh token to cookie
+    res.cookie('refresh_token', newRefreshToken); // , { httpOnly: true, secure: true }
 
     res.status(201).json({
       accessToken: newAccessToken,

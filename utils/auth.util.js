@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserRefreshToken from '../models/user-refresh-token.model.js';
 
-const ACCESS_TOKEN_LIFETIME = '20s';
-const REFRESH_TOKEN_LIFETIME = '60s';
+const ACCESS_TOKEN_LIFETIME = '10s';
+const REFRESH_TOKEN_LIFETIME = '1800s';
 
 const generateAccessToken = (userId) => {
   const accessTokenPayload = {
