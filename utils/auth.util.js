@@ -51,8 +51,12 @@ const saveRefreshTokenInDB = async (refreshToken, userId) => {
 };
 
 const deleteRefreshTokenInDB = async (userId) => {
-  // используем deleteMany(), а не deleteOne()-  удаляем все, если вдруг есть другие записи с таким userId
-  await UserRefreshToken.deleteMany({ userId });
+  try {
+    // используем deleteMany(), а не deleteOne()-  удаляем все, если вдруг есть другие записи с таким userId
+    await UserRefreshToken.deleteMany({ userId });
+  } catch (e) {
+    throw new Error('Ошибка удаления из базы');
+  }
 };
 
 export { generateAccessToken, generateRefreshToken, saveRefreshTokenInDB, deleteRefreshTokenInDB };

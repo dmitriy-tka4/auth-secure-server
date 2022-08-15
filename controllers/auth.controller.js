@@ -18,10 +18,14 @@ const signup = async (req, res, next) => {
   }
 
   // check email
-  const isEmailExisted = await User.exists({ email });
+  try {
+    const isEmailExisted = await User.exists({ email });
 
-  if (isEmailExisted) {
-    return res.status(400).send('Пользователь с таким email уже существует');
+    if (isEmailExisted) {
+      return res.status(400).send('Пользователь с таким email уже существует');
+    }
+  } catch (e) {
+    throw new Error('Ошибка поиска email в базе');
   }
 
   // check password
@@ -43,11 +47,11 @@ const signup = async (req, res, next) => {
     return res.status(400).send('Ошибка сохранения пользователя в базу');
   }
 
-  // создаем tokens
+  // создаем токены
   const accessToken = authUtil.generateAccessToken(user._id);
   const refreshToken = authUtil.generateRefreshToken(user._id);
 
-  // сохраняем токен в БД
+  // сохраняем refresh токен в БД
   try {
     await authUtil.saveRefreshTokenInDB(refreshToken, user._id);
   } catch (e) {
@@ -130,7 +134,7 @@ const logout = async (req, res, next) => {
     return res.status(400).send('В данных нет userId');
   }
 
-  // нужно удалить старый Refresh token, если он есть в базе
+  // нужно удалить старый refresh token, если он есть в базе
   try {
     await authUtil.deleteRefreshTokenInDB(userId);
   } catch (e) {
