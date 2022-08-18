@@ -8,7 +8,7 @@ import * as authUtil from '../utils/auth.util.js';
 
 const signup = async (req, res, next) => {
   if (!req.body) {
-    return res.status(400).send('Запрос не имеет тела запроса');
+    return res.status(400).send('Запрос не имеет тела');
   }
 
   const { email, password } = req.body;
@@ -115,7 +115,7 @@ const login = async (req, res, next) => {
   // add refresh token to cookie
   res.cookie('refresh_token', refreshToken); // , { httpOnly: true, secure: true }
 
-  res.status(201).json({
+  res.status(200).json({
     accessToken,
     refreshToken
   });
@@ -151,7 +151,7 @@ const refresh = async (req, res, next) => {
   // check availability refresh token
 
   // in cookies
-  const inRefreshToken = req.cookies['refresh_token']
+  const inRefreshToken = req.cookies['refresh_token'];
 
   // in headers
   // const authHeader = req.get('Authorization');
